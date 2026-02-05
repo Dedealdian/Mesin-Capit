@@ -3,169 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Capit Warkop69 - Professional System</title>
+    <title>Warkop69 Arcade</title>
     <script src="admin_config.js"></script>
     <style>
-        :root { --tema: #ff4757; --gold: #ffd700; }
-        body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; color: white; height: 100%; overflow: hidden; background: #000; }
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            font-family: 'Arial Black', sans-serif; 
+            overflow: hidden; 
+        }
 
-        /* --- HALAMAN LOGIN --- */
-        #login-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px; box-sizing: border-box; }
-        
-        /* Efek Api Membara */
-        .fire-container { position: relative; margin-bottom: 5px; z-index: 5; }
-        .fire-text { font-size: 38px; font-weight: 900; text-transform: uppercase; animation: burn 0.5s infinite alternate; }
-        .fire-emoji { font-size: 25px; position: absolute; bottom: -5px; animation: smoke 1.5s infinite; opacity: 0; }
-        @keyframes burn { from { transform: scale(1); } to { transform: scale(1.05); } }
-        @keyframes smoke { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 100% { transform: translateY(-50px) scale(2); opacity: 0; } }
+        /* Background Dinamis dari Bot */
+        #main-bg {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #4a0000; /* Warna cadangan */
+            text-align: center;
+            color: white;
+            transition: 0.5s;
+        }
 
-        .container-input { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-sizing: border-box; }
-        input { width: 100%; padding: 15px; border: none; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; box-sizing: border-box; font-size: 16px; }
-        .btn-main { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; font-size: 18px; cursor: pointer; margin-bottom: 10px; color: white; transition: 0.2s; }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
 
-        /* --- NOTIFIKASI & MODAL --- */
-        #notif-error { display: none; position: fixed; top: 15px; left: 15px; right: 15px; background: #1e1e1e; border-radius: 15px; padding: 18px; z-index: 5000; box-shadow: 0 10px 30px #000; animation: slideDown 0.4s; }
-        @keyframes slideDown { from { transform: translateY(-100px); } to { transform: translateY(0); } }
-        
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 85%; max-height: 60vh; border-radius: 25px; padding: 25px; overflow-y: auto; border: 2px solid white; box-sizing: border-box; }
+        /* Area Mesin Capit */
+        .arcade-area {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
 
-        /* --- AREA GAME --- */
-        #game-page { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .machine { width: 320px; height: 450px; background: #0f172a; border: 6px solid #1e293b; border-radius: 20px; position: relative; overflow: hidden; }
-        #claw-box { position: absolute; top: 0; left: 130px; width: 60px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        #wire { width: 2px; height: 40px; background: #64748b; transition: height 1s; }
-        #claw-img { width: 50px; height: 50px; background: url('https://cdn-icons-png.flaticon.com/512/2881/2881142.png') no-repeat center; background-size: contain; }
-        .prize-item { width: 50px; height: 50px; position: absolute; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        #img-api { width: 100%; height: 100%; object-fit: contain; }
+
+        /* Judul & Teks */
+        h1 { font-size: 22px; margin: 10px 0; text-transform: uppercase; line-height: 1.2; }
+        p { font-size: 14px; color: #ccc; margin-bottom: 15px; }
+
+        /* Input & Tombol Merah Terang ala Gambar */
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            background: white;
+            font-weight: bold;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 5px 0 #8b0000;
+            transition: 0.1s;
+        }
+
+        .btn-main:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #8b0000;
+        }
+
+        .btn-list {
+            background: transparent;
+            border: 1px solid white;
+            box-shadow: none;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Notifikasi Custom */
+        #notif {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            padding: 15px 25px;
+            border-radius: 10px;
+            border-left: 5px solid #ff0000;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
-<body>
+<body id="main-body">
 
-    <div id="notif-error">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span>⚠️ <b>SISTEM:</b> Cupon Tidak Ada</span>
-            <span onclick="this.parentElement.parentElement.style.display='none'" style="font-size:26px; cursor:pointer; color:var(--tema);">×</span>
-        </div>
-    </div>
+    <div id="notif">⚠️ <span id="msg-notif">Cupon Tidak Ada</span></div>
 
-    <div id="login-page">
-        <div class="fire-container">
-            <div class="fire-text" id="dom-judul"></div>
-            <span class="fire-emoji" style="left:10%">🔥</span>
-            <span class="fire-emoji" style="left:80%">🔥</span>
-        </div>
-        <div style="margin-bottom:25px;"><small id="dom-sub"></small></div>
-        
-        <div class="container-input">
-            <input type="text" id="coupon-in" placeholder="KETIK KODE DI SINI...">
-            <button class="btn-main" id="btn-cari" onclick="checkKupon()">CARI</button>
-            <button class="btn-main" id="btn-list" onclick="showHadiah()" style="background:transparent; border:2px solid white;">👀 LIHAT HADIAH</button>
-        </div>
-    </div>
-
-    <div id="modal-hadiah" class="modal">
-        <div class="modal-box" id="dom-modal-box">
-            <span onclick="document.getElementById('modal-hadiah').style.display='none'" style="float:right; cursor:pointer; color:red; font-size:35px; font-weight:bold;">×</span>
-            <h2 id="modal-title">Daftar Hadiah</h2>
-            <div id="isi-hadiah" style="text-align:left; line-height:1.6;"></div>
-        </div>
-    </div>
-
-    <div id="game-page">
-        <div class="machine" id="floor">
-            <div id="claw-box">
-                <div id="wire"></div>
-                <div id="claw-img"></div>
+    <div id="main-bg">
+        <div class="container">
+            <div class="arcade-area">
+                <img id="img-api" src="" alt="display">
             </div>
+
+            <h1 id="txt-judul"></h1>
+            <p id="txt-sub"></p>
+
+            <input type="text" id="coupon-input" placeholder="MASUKAN KODE...">
+            
+            <button class="btn-main" id="btn-mulai" onclick="prosesCek()"></button>
+            <button class="btn-main btn-list" id="btn-list" onclick="showHadiah()"></button>
         </div>
-        <button class="btn-main" id="btn-run" onclick="jalankan()" style="width:200px; margin-top:20px;">▶️ MULAI CAPIT</button>
     </div>
 
     <script>
-        let kadoTerpilih = "";
-        let sibuk = false;
-
-        // Inisialisasi Tampilan dari Config
-        window.onload = () => {
-            document.body.style.background = MASTER_CONFIG.bgHalaman;
-            document.getElementById('dom-judul').innerText = MASTER_CONFIG.judulUtama;
-            document.getElementById('dom-judul').style.textShadow = `0 0 20px ${MASTER_CONFIG.warnaTema}`;
-            document.getElementById('dom-sub').innerText = MASTER_CONFIG.subJudul;
-            document.getElementById('dom-sub').style.color = MASTER_CONFIG.warnaHadiah;
-            document.getElementById('btn-cari').style.background = MASTER_CONFIG.warnaTema;
-            document.getElementById('btn-run').style.background = MASTER_CONFIG.warnaTema;
-            document.getElementById('notif-error').style.borderLeft = `6px solid ${MASTER_CONFIG.warnaTema}`;
-            document.getElementById('dom-modal-box').style.borderColor = MASTER_CONFIG.warnaHadiah;
-            document.getElementById('modal-title').style.color = MASTER_CONFIG.warnaHadiah;
-        };
-
-        // Animasi Asap/Api tambahan
-        setInterval(() => {
-            const smoke = document.createElement('span');
-            smoke.className = 'fire-emoji';
-            smoke.innerText = Math.random() > 0.5 ? '🔥' : '💨';
-            smoke.style.left = Math.random() * 100 + '%';
-            document.querySelector('.fire-container').appendChild(smoke);
-            setTimeout(() => smoke.remove(), 1500);
-        }, 500);
-
-        function checkKupon() {
-            const val = document.getElementById('coupon-in').value.toUpperCase();
-            if(MASTER_CONFIG[val]) {
-                kadoTerpilih = MASTER_CONFIG[val];
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('game-page').style.display = 'flex';
-                mulaiMesin();
-            } else {
-                document.getElementById('notif-error').style.display = 'block';
-                setTimeout(() => document.getElementById('notif-error').style.display = 'none', 4000);
-            }
+        // Fungsi memuat setingan dari admin_config.js
+        function loadRemote() {
+            document.getElementById('main-bg').style.background = MASTER_CONFIG.warnaBackground;
+            document.getElementById('img-api').src = MASTER_CONFIG.urlGambarApi;
+            document.getElementById('txt-judul').innerText = MASTER_CONFIG.judulUtama;
+            document.getElementById('txt-sub').innerText = MASTER_CONFIG.subJudul;
+            document.getElementById('btn-mulai').innerText = MASTER_CONFIG.teksTombolMulai;
+            document.getElementById('btn-list').innerText = MASTER_CONFIG.teksTombolList;
         }
 
-        function mulaiMesin() {
-            const floor = document.getElementById('floor');
-            for(let i=0; i<25; i++) {
-                const p = document.createElement('div');
-                p.className = 'prize-item';
-                p.style.backgroundImage = `url('${MASTER_CONFIG.gambarHadiah}')`;
-                p.style.left = Math.random() * 260 + 'px';
-                p.style.bottom = Math.random() * 60 + 'px';
-                p.style.transform = `rotate(${Math.random()*360}deg)`;
-                floor.appendChild(p);
-            }
-        }
-
-        async function jalankan() {
-            if(sibuk) return;
-            sibuk = true;
-            const wire = document.getElementById('wire');
-            wire.style.height = "350px";
-            await new Promise(r => setTimeout(r, 1000));
-
-            if(kadoTerpilih !== "Zonkk") {
-                const item = document.createElement('div');
-                item.className = 'prize-item';
-                item.style.backgroundImage = `url('${MASTER_CONFIG.gambarHadiah}')`;
-                item.style.bottom = "-15px";
-                item.style.left = "5px";
-                document.getElementById('claw-img').appendChild(item);
-            }
-
-            wire.style.height = "40px";
-            await new Promise(r => setTimeout(r, 1200));
+        function prosesCek() {
+            const input = document.getElementById('coupon-input').value.toUpperCase();
+            const notif = document.getElementById('notif');
             
-            if(kadoTerpilih !== "Zonkk") {
-                alert("SELAMAT! Anda mendapatkan: " + kadoTerpilih + "\n\nSilahkan Screenshot dan kirim ke Admin!");
+            if (MASTER_CONFIG[input]) {
+                alert("🎟️ BERHASIL!\nHadiah Anda: " + MASTER_CONFIG[input]);
+                location.reload();
             } else {
-                alert("Yahh.. Sayang sekali miring sedikit! Coba lagi ya.");
+                notif.style.display = 'block';
+                setTimeout(() => { notif.style.display = 'none'; }, 3000);
             }
-            location.reload();
         }
 
         function showHadiah() {
-            document.getElementById('isi-hadiah').innerHTML = MASTER_CONFIG.listHadiah;
-            document.getElementById('modal-hadiah').style.display = 'flex';
+            alert("📜 DAFTAR HADIAH:\n" + MASTER_CONFIG.listHadiah.replace(/<br>/g, '\n'));
         }
+
+        // Jalankan saat load
+        window.onload = loadRemote;
     </script>
 </body>
 </html>

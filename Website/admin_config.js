@@ -1,27 +1,23 @@
 const MASTER_CONFIG = {
-    // --- PENGATURAN TAMPILAN (Ubah di sini) ---
-    "warnaTema": "#ff4757",           // Warna Tombol & Notifikasi
-    "warnaHadiah": "#ffd700",         // Warna Emas untuk teks hadiah
-    "judulUtama": "Capit Warkop69",   // Judul yang membara
-    "subJudul": "MENANGKAN HADIAH 2.5JT",
-    
-    // --- PENGATURAN GAMBAR HADIAH ---
-    "gambarHadiah": "piala.png",      // Nama file gambar hadiah di cPanel
-    "bgHalaman": "radial-gradient(circle, #220000, #000)",
+    // --- SETINGAN TEKS UTAMA ---
+    "judulUtama": "CAPIT WARKOP69 GACOR",
+    "subJudul": "MASUKAN KODE TIKET ANDA",
+    "teksTombolMulai": "MULAI SEKARANG",
+    "teksTombolList": "DAFTAR HADIAH",
+    "teksLoading": "MENYIAPKAN MESIN...",
 
-    // --- DAFTAR KUPON (Kode : Nama Hadiah) ---
-    "KUPON100": "Beruang 1k",
-    "PIALASULTAN": "Piala Diamond 2.5jt",
-    "GIVEAWAY": "Boneka Beruang",
-    "COBAIN": "Zonkk",
+    // --- SETINGAN GAMBAR (NAMA FILE) ---
+    // Pastikan nama file ini sama dengan yang ada di bot.php
+    "urlGambarApi": "efek_api.png",
+    "urlGambarCapit": "claw.png",
+    "urlGambarHadiah": "hadiah_box.png",
+    "urlGambarLoading": "loading.gif",
 
-    // --- ISI MENU LIHAT HADIAH (Bisa pakai <br> untuk baris baru) ---
-    "listHadiah": `
-        <b>🏆 HADIAH UTAMA:</b><br>
-        - Piala Diamond Rp 2.500.000<br><br>
-        <b>🎁 HADIAH LAINNYA:</b><br>
-        - Saldo Dana Rp 500.000<br>
-        - Boneka Beruang Jumbo<br>
-        - Mystery Box Warkop69
-    `
+    // --- SETINGAN TAMPILAN ---
+    "warnaBackground": "linear-gradient(135deg, #4a0000 0%, #000000 100%)",
+
+    // --- DATABASE KUPON & HADIAH ---
+    "listHadiah": "1. iPhone 15 Pro Max<br>2. Saldo Dana 500k<br>3. Boneka Jumbo",
+    "KUPON_ADMIN": "Hadiah Admin Khusus",
+    "TIKETGACOR": "Jackpot 1 Juta"
 };
