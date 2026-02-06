@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Warkop69 Arcade</title>
+    <script src="admin_config.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            font-family: 'Arial Black', sans-serif; 
+            overflow: hidden; 
+        }
+
+        /* Background Dinamis dari Bot */
+        #main-bg {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #4a0000; /* Warna cadangan */
+            text-align: center;
+            color: white;
+            transition: 0.5s;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Area Mesin Capit */
+        .arcade-area {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        #img-api { width: 100%; height: 100%; object-fit: contain; }
+
+        /* Judul & Teks */
+        h1 { font-size: 22px; margin: 10px 0; text-transform: uppercase; line-height: 1.2; }
+        p { font-size: 14px; color: #ccc; margin-bottom: 15px; }
+
+        /* Input & Tombol Merah Terang ala Gambar */
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            background: white;
+            font-weight: bold;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 5px 0 #8b0000;
+            transition: 0.1s;
+        }
+
+        .btn-main:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #8b0000;
+        }
+
+        .btn-list {
+            background: transparent;
+            border: 1px solid white;
+            box-shadow: none;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Notifikasi Custom */
+        #notif {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            padding: 15px 25px;
+            border-radius: 10px;
+            border-left: 5px solid #ff0000;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body id="main-body">
+
+    <div id="notif">⚠️ <span id="msg-notif">Cupon Tidak Ada</span></div>
+
+    <div id="main-bg">
+        <div class="container">
+            <div class="arcade-area">
+                <img id="img-api" src="" alt="display">
+            </div>
+
+            <h1 id="txt-judul"></h1>
+            <p id="txt-sub"></p>
+
+            <input type="text" id="coupon-input" placeholder="MASUKAN KODE...">
+            
+            <button class="btn-main" id="btn-mulai" onclick="prosesCek()"></button>
+            <button class="btn-main btn-list" id="btn-list" onclick="showHadiah()"></button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi memuat setingan dari admin_config.js
+        function loadRemote() {
+            document.getElementById('main-bg').style.background = MASTER_CONFIG.warnaBackground;
+            document.getElementById('img-api').src = MASTER_CONFIG.urlGambarApi;
+            document.getElementById('txt-judul').innerText = MASTER_CONFIG.judulUtama;
+            document.getElementById('txt-sub').innerText = MASTER_CONFIG.subJudul;
+            document.getElementById('btn-mulai').innerText = MASTER_CONFIG.teksTombolMulai;
+            document.getElementById('btn-list').innerText = MASTER_CONFIG.teksTombolList;
+        }
+
+        function prosesCek() {
+            const input = document.getElementById('coupon-input').value.toUpperCase();
+            const notif = document.getElementById('notif');
+            
+            if (MASTER_CONFIG[input]) {
+                alert("🎟️ BERHASIL!\nHadiah Anda: " + MASTER_CONFIG[input]);
+                location.reload();
+            } else {
+                notif.style.display = 'block';
+                setTimeout(() => { notif.style.display = 'none'; }, 3000);
+            }
+        }
+
+        function showHadiah() {
+            alert("📜 DAFTAR HADIAH:\n" + MASTER_CONFIG.listHadiah.replace(/<br>/g, '\n'));
+        }
+
+        // Jalankan saat load
+        window.onload = loadRemote;
+    </script>
+</body>
+</html>
