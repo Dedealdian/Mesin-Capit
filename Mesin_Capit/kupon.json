@@ -153,5 +153,10 @@
         "kode": "REGE-3ECFB0",
         "hadiah": "Zonk",
         "status": "aktif"
+    },
+    {
+        "kode": "VIPS-FC1188",
+        "hadiah": "zoonk",
+        "status": "aktif"
     }
 ]
