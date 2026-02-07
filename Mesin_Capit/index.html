@@ -3,93 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mesin Capit Online - Klaim Kupon</title>
+    <title>Klaim Kupon Mesin Capit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { background: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .container { max-width: 500px; margin-top: 50px; text-align: center; }
-        .card { background: #1e1e1e; border: 1px solid #333; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .img-loading { width: 100%; border-radius: 10px; margin-bottom: 20px; border: 2px solid #ff0055; }
-        .btn-claim { background: linear-gradient(45deg, #ff0055, #ff5500); border: none; font-weight: bold; width: 100%; padding: 12px; }
-        .btn-claim:hover { opacity: 0.8; }
-        input { background: #222 !important; border: 1px solid #444 !important; color: white !important; text-align: center; font-size: 1.2rem; }
+        body { background: #0f0f0f; color: #fff; text-align: center; padding-top: 50px; }
+        .card { background: #1a1a1a; border: 1px solid #d4af37; border-radius: 15px; padding: 25px; }
+        .btn-gold { background: #d4af37; color: #000; font-weight: bold; border: none; width: 100%; }
+        input { background: #222 !important; border: 1px solid #444 !important; color: gold !important; font-weight: bold; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="card">
-        <h2 class="mb-4">🕹️ MESIN CAPIT</h2>
-        
-        <img src="loading.gif" alt="Loading..." class="img-loading" id="assets-loading">
-
-        <div class="mb-3">
-            <label class="form-label">Masukkan Kode Kupon:</label>
-            <input type="text" id="couponInput" class="form-control" placeholder="REGE-XXXXXX atau VIPS-XXXXXX">
-        </div>
-
-        <button onclick="checkCoupon()" class="btn btn-primary btn-claim">KLAIM HADIAH SEKARANG</button>
-        
-        <p class="mt-4 text-secondary" style="font-size: 0.8rem;">
-            Dapatkan kode kupon dari Bot Telegram resmi kami.
-        </p>
+<div class="container" style="max-width: 450px;">
+    <div class="card shadow-lg">
+        <h3>🕹️ MESIN CAPIT</h3>
+        <img src="loading.gif" class="img-fluid rounded mb-3" style="border: 2px solid gold;">
+        <input type="text" id="coupon" class="form-control mb-3 text-center" placeholder="MASUKKAN KODE">
+        <button onclick="prosesKlaim()" class="btn btn-gold">KLAIM SEKARANG</button>
     </div>
 </div>
 
 <script>
-    // --- KONFIGURASI LINK GITHUB KAMU ---
-    // Pastikan username (Dedealdian) dan nama repo (Mesin-Capit) sudah benar
-    const GITHUB_RAW_URL = "https://raw.githubusercontent.com/Dedealdian/Mesin-Capit/main/kupon.json";
+async function prosesKlaim() {
+    const kode = document.getElementById('coupon').value.trim().toUpperCase();
+    const API_URL = "https://raw.githubusercontent.com/Dedealdian/Mesin-Capit/main/kupon.json";
 
-    async function checkCoupon() {
-        const inputUser = document.getElementById('couponInput').value.trim().toUpperCase();
+    if(!kode) return Swal.fire('Eits!', 'Kode jangan kosong.', 'warning');
+
+    Swal.fire({title: 'Mengecek...', didOpen: () => Swal.showLoading()});
+
+    try {
+        // nocache= agar selalu ambil data terbaru dari GitHub
+        const resp = await fetch(`${API_URL}?nocache=${Math.random()}`);
+        const data = await resp.json();
         
-        if (!inputUser) {
-            Swal.fire('Oops!', 'Silakan masukkan kode kupon dulu.', 'warning');
-            return;
+        const item = data.find(k => k.kode.toUpperCase() === kode);
+
+        if(item && item.status === "aktif") {
+            Swal.fire('BERHASIL!', `Hadiah: ${item.hadiah}`, 'success');
+        } else {
+            Swal.fire('GAGAL', 'Kode tidak valid atau sudah expired.', 'error');
         }
-
-        Swal.fire({
-            title: 'Mengecek Kupon...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-        });
-
-        try {
-            // Menambahkan timestamp (?t=...) agar tidak terkena Cache browser
-            const response = await fetch(GITHUB_RAW_URL + "?t=" + new Date().getTime());
-            
-            if (!response.ok) throw new Error("Gagal mengambil data dari GitHub");
-
-            const kuponData = await response.json();
-
-            // Cari kupon yang cocok dan statusnya masih aktif
-            const found = kuponData.find(k => k.kode === inputUser && k.status === "aktif");
-
-            if (found) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'SELAMAT!',
-                    text: 'Kamu mendapatkan hadiah: ' + found.hadiah,
-                    confirmButtonText: 'Ambil Hadiah'
-                });
-                
-                // Opsional: Di sini kamu bisa tambahkan logika untuk menandai kupon "sudah terpakai"
-                
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'SISTEM: Gagal',
-                    text: 'Kupon Tidak Ada atau Sudah Kedaluwarsa.'
-                });
-            }
-        } catch (error) {
-            console.error(error);
-            Swal.fire('Error!', 'Terjadi kesalahan koneksi ke server GitHub.', 'error');
-        }
+    } catch(e) {
+        Swal.fire('Error', 'Gagal konek ke server database.', 'error');
     }
+}
 </script>
-
 </body>
 </html>
