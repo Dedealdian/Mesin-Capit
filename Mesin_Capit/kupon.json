@@ -3,5 +3,155 @@
         "kode": "VIPS-DAD1BD",
         "hadiah": "10000",
         "status": "aktif"
+    },
+    {
+        "kode": "REGE-A7E53B",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-B7469C",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-C52E00",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-A2AC4B",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-16DE21",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-38AE62",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-ED8CA9",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-EB93EA",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-EC6609",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-D37C22",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-4C3BC4",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-0F6FF5",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-956071",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-513113",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-9BB66A",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-33948A",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-312725",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-8FF0BC",
+        "hadiah": "5000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-10A7AB",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-4296F4",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-DED85B",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-6EBF93",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-D37E85",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-2125F5",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-03024A",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-956E00",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-6A7DA3",
+        "hadiah": "Jackpot",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-478D28",
+        "hadiah": "Zonk",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-5196BF",
+        "hadiah": "1000",
+        "status": "aktif"
+    },
+    {
+        "kode": "REGE-3ECFB0",
+        "hadiah": "Zonk",
+        "status": "aktif"
     }
 ]
