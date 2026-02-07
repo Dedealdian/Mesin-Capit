@@ -163,5 +163,10 @@
         "kode": "VIPS-1971C5",
         "hadiah": "zoonk",
         "status": "aktif"
+    },
+    {
+        "kode": "VIPS-14FF4C",
+        "hadiah": "1000",
+        "status": "aktif"
     }
 ]
