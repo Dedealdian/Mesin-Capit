@@ -3,170 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mesin Capit Pro - Admin Control</title>
+    <title>Mesin Capit Online - Klaim Kupon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root {
-            --primary: #ff4757;
-            --secondary: #2f3542;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e2e;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Area Loading */
-        #loading-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-        #img-loading {
-            width: 200px;
-            height: auto;
-            border-radius: 15px;
-        }
-
-        /* Mesin Capit */
-        .game-container {
-            position: relative;
-            width: 350px;
-            height: 500px;
-            border: 8px solid #444;
-            background: #333;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #img-api {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            pointer-events: none;
-        }
-
-        #img-capit {
-            width: 80px;
-            transition: 0.5s;
-        }
-
-        /* Input Kupon */
-        .coupon-box {
-            margin-top: 20px;
-            background: var(--secondary);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        input {
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            width: 150px;
-            text-transform: uppercase;
-        }
-        button {
-            padding: 10px 20px;
-            background: var(--primary);
-            border: none;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover { background: #ff6b81; }
-
-        .hidden { display: none !important; }
+        body { background: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 500px; margin-top: 50px; text-align: center; }
+        .card { background: #1e1e1e; border: 1px solid #333; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .img-loading { width: 100%; border-radius: 10px; margin-bottom: 20px; border: 2px solid #ff0055; }
+        .btn-claim { background: linear-gradient(45deg, #ff0055, #ff5500); border: none; font-weight: bold; width: 100%; padding: 12px; }
+        .btn-claim:hover { opacity: 0.8; }
+        input { background: #222 !important; border: 1px solid #444 !important; color: white !important; text-align: center; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <img id="img-loading" src="loading.gif" alt="Loading...">
-        <p id="loading-text">Menyiapkan Mesin...</p>
-    </div>
+<div class="container">
+    <div class="card">
+        <h2 class="mb-4">🕹️ MESIN CAPIT</h2>
+        
+        <img src="loading.gif" alt="Loading..." class="img-loading" id="assets-loading">
 
-    <h1 id="judul">MESIN CAPIT BERHADIAH</h1>
-    
-    <div class="game-container">
-        <img id="img-capit" src="claw.png" alt="Capit">
-        <img id="img-api" src="efek_api.png" alt="Efek">
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Masukkan Kode Kupon:</label>
+            <input type="text" id="couponInput" class="form-control" placeholder="REGE-XXXXXX atau VIPS-XXXXXX">
+        </div>
 
-    <div class="coupon-box">
-        <h3>🎟️ Masukkan Kode Kupon</h3>
-        <input type="text" id="kode-kupon" placeholder="CPN-XXXXXX">
-        <button onclick="prosesKupon()">KLAIM HADIAH</button>
+        <button onclick="checkCoupon()" class="btn btn-primary btn-claim">KLAIM HADIAH SEKARANG</button>
+        
+        <p class="mt-4 text-secondary" style="font-size: 0.8rem;">
+            Dapatkan kode kupon dari Bot Telegram resmi kami.
+        </p>
     </div>
+</div>
 
-    <script>
-        // 1. Fitur Anti-Cache: Paksa browser ambil gambar terbaru
-        function refreshAssets() {
-            const ver = "?v=" + Math.random();
-            document.getElementById('img-loading').src = "loading.gif" + ver;
-            document.getElementById('img-capit').src = "claw.png" + ver;
-            document.getElementById('img-api').src = "efek_api.png" + ver;
+<script>
+    // --- KONFIGURASI LINK GITHUB KAMU ---
+    // Pastikan username (Dedealdian) dan nama repo (Mesin-Capit) sudah benar
+    const GITHUB_RAW_URL = "https://raw.githubusercontent.com/Dedealdian/Mesin-Capit/main/kupon.json";
+
+    async function checkCoupon() {
+        const inputUser = document.getElementById('couponInput').value.trim().toUpperCase();
+        
+        if (!inputUser) {
+            Swal.fire('Oops!', 'Silakan masukkan kode kupon dulu.', 'warning');
+            return;
         }
 
-        // 2. Simulasi Loading
-        window.onload = () => {
-            refreshAssets();
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-            }, 3000);
-        };
+        Swal.fire({
+            title: 'Mengecek Kupon...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
 
-        // 3. Logika Cek Kupon dari JSON
-        async function prosesKupon() {
-            const input = document.getElementById('kode-kupon').value.trim().toUpperCase();
-            if (!input) return alert("Masukkan kode dulu bos!");
+        try {
+            // Menambahkan timestamp (?t=...) agar tidak terkena Cache browser
+            const response = await fetch(GITHUB_RAW_URL + "?t=" + new Date().getTime());
+            
+            if (!response.ok) throw new Error("Gagal mengambil data dari GitHub");
 
-            try {
-                // Ambil file kupon.json yang diupdate oleh bot
-                const response = await fetch('kupon.json?v=' + Math.random());
-                const dataKupon = await response.json();
+            const kuponData = await response.json();
 
-                // Cari kupon yang cocok
-                const kFound = dataKupon.find(k => k.kode === input && k.status === 'aktif');
+            // Cari kupon yang cocok dan statusnya masih aktif
+            const found = kuponData.find(k => k.kode === inputUser && k.status === "aktif");
 
-                if (kFound) {
-                    alert("✅ BERHASIL!\nHadiah: " + kFound.hadiah + "\nSelamat Bermain!");
-                    jalankanMesin(kFound.hadiah);
-                } else {
-                    alert("❌ Kupon Salah atau Sudah Kadaluarsa!");
-                }
-            } catch (e) {
-                alert("Gagal terhubung ke database kupon.");
-                console.log(e);
+            if (found) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'SELAMAT!',
+                    text: 'Kamu mendapatkan hadiah: ' + found.hadiah,
+                    confirmButtonText: 'Ambil Hadiah'
+                });
+                
+                // Opsional: Di sini kamu bisa tambahkan logika untuk menandai kupon "sudah terpakai"
+                
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'SISTEM: Gagal',
+                    text: 'Kupon Tidak Ada atau Sudah Kedaluwarsa.'
+                });
             }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error!', 'Terjadi kesalahan koneksi ke server GitHub.', 'error');
         }
+    }
+</script>
 
-        function jalankanMesin(hadiah) {
-            console.log("Memulai mesin untuk hadiah: " + hadiah);
-            const capit = document.getElementById('img-capit');
-            capit.style.transform = "translateY(200px)";
-            setTimeout(() => {
-                capit.style.transform = "translateY(0px)";
-                alert("🎉 Kamu Mendapatkan: " + hadiah);
-            }, 1000);
-        }
-    </script>
 </body>
 </html>
