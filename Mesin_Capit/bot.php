@@ -1,112 +1,112 @@
 <?php
-// --- KONFIGURASI ---
+// KONFIGURASI
 $token = "8584026511:AAEIGd6fWj88sqvKdZ6fjlrmt4xiqTY8sCc";
-$configFile = 'admin_config.js';
 
-// --- LOGIKA PENERIMA DATA ---
-// Mendukung input dari Webhook (file_get_contents) maupun Polling (variable $update_data)
+// Menerima input dari Telegram
 $input = file_get_contents("php://input");
-if (!$input && isset($update_data)) { 
-    $update = $update_data; 
-} else {
-    $update = json_decode($input, true);
-}
+$update = json_decode($input, true);
 
-if (!$update) exit; 
+// Jika dijalankan via polling.php, data dikirim lewat variabel $update_data
+if (isset($update_data)) $update = $update_data;
 
 $message = $update['message']['text'] ?? "";
 $chat_id = $update['message']['chat']['id'] ?? "";
-$caption = strtolower($update['message']['caption'] ?? "");
 $photo = $update['message']['photo'] ?? null;
+$document = $update['message']['document'] ?? null;
+$callback_query = $update['callback_query'] ?? null;
 
-// --- FUNGSI-FUNGSI UTAMA (DIBUNGKUS AGAR TIDAK ERROR DI TERMUX) ---
+// --- FUNGSI KIRIM PESAN ---
+function kirimPesan($id, $msg, $keyboard = null) {
+    global $token;
+    $url = "https://api.telegram.org/bot$token/sendMessage";
+    $post_fields = [
+        'chat_id' => $id,
+        'text' => $msg,
+        'parse_mode' => 'Markdown'
+    ];
+    if ($keyboard) $post_fields['reply_markup'] = json_encode($keyboard);
 
-if (!function_exists('kirim')) {
-    function kirim($ch, $msg) {
-        global $token;
-        $url = "https://api.telegram.org/bot$token/sendMessage";
-        $post_fields = [
-            'chat_id' => $ch,
-            'text' => $msg,
-            'parse_mode' => 'Markdown'
-        ];
-
-        $ch_curl = curl_init();
-        curl_setopt($ch_curl, CURLOPT_URL, $url);
-        curl_setopt($ch_curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch_curl, CURLOPT_POSTFIELDS, $post_fields);
-        curl_exec($ch_curl);
-        // curl_close() dihapus karena tidak diperlukan lagi di PHP 8.0+
-    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+    curl_exec($ch);
+    curl_close($ch);
 }
 
-if (!function_exists('updateConfig')) {
-    function updateConfig($key, $val) {
-        global $configFile;
-        if (!file_exists($configFile)) return;
-        $content = file_get_contents($configFile);
-        // Mencari kunci dan mengganti nilainya di dalam admin_config.js
-        $res = preg_replace('/"' . $key . '":\s*".*?"/', '"' . $key . '": "' . $val . '"', $content);
-        file_put_contents($configFile, $res);
-    }
+// --- LOGIKA TOMBOL (GANTI GAMBAR) ---
+if ($callback_query) {
+    $data = $callback_query['data'];
+    $cb_id = $callback_query['message']['chat']['id'];
+    file_put_contents("status_$cb_id.txt", $data); // Simpan status
+    
+    $label = str_replace('set_', '', $data);
+    kirimPesan($cb_id, "📸 Siap! Kirimkan **Foto/GIF** untuk mengganti: *$label*");
+    exit;
 }
 
-if (!function_exists('jalankanPush')) {
-    function jalankanPush() {
-        // Memberikan izin eksekusi ke script shell
-        shell_exec("chmod +x up.sh");
-        // Menjalankan push dan menangkap output error jika ada
-        $output = shell_exec("sh up.sh 2>&1");
-        return $output;
-    }
-}
+// --- LOGIKA TERIMA FILE (FOTO/GIF) ---
+if ($photo || $document) {
+    $status = @file_get_contents("status_$chat_id.txt");
+    if ($status) {
+        $file_id = $photo ? end($photo)['file_id'] : $document['file_id'];
+        $getFile = json_decode(file_get_contents("https://api.telegram.org/bot$token/getFile?file_id=$file_id"), true);
+        $file_path = $getFile['result']['file_path'];
+        
+        $nama_file = "";
+        if ($status == "set_loading") $nama_file = "loading.gif";
+        if ($status == "set_capit") $nama_file = "claw.png";
+        if ($status == "set_api") $nama_file = "efek_api.png";
 
-// --- 1. LOGIKA TERIMA FOTO (GANTI GAMBAR) ---
-if ($photo) {
-    $file_id = end($photo)['file_id'];
-    $getFile = json_decode(file_get_contents("https://api.telegram.org/bot$token/getFile?file_id=$file_id"), true);
-    $file_path = $getFile['result']['file_path'];
-
-    $nama_file = "";
-    if (strpos($caption, "hadiah") !== false) $nama_file = "hadiah_box.png";
-    elseif (strpos($caption, "capit") !== false) $nama_file = "claw.png";
-    elseif (strpos($caption, "api") !== false) $nama_file = "efek_api.png";
-    elseif (strpos($caption, "loading") !== false) $nama_file = "loading.gif";
-
-    if ($nama_file) {
-        $url_file = "https://api.telegram.org/file/bot$token/$file_path";
-        if (copy($url_file, $nama_file)) {
-            $statusGit = jalankanPush();
-            kirim($chat_id, "✅ *GAMBAR BERHASIL DIUBAH!*\nFile: `$nama_file` sudah aktif di server.\n\n🚀 *STATUS GITHUB:*\n`$statusGit`");
-        } else {
-            kirim($chat_id, "❌ *GAGAL MENYIMPAN GAMBAR!*");
+        if ($nama_file) {
+            $url_download = "https://api.telegram.org/file/bot$token/$file_path";
+            copy($url_download, $nama_file);
+            shell_exec("sh up.sh"); // Push ke GitHub
+            unlink("status_$chat_id.txt");
+            kirimPesan($chat_id, "✅ Berhasil! File `$nama_file` telah diperbarui di GitHub.");
         }
-    } else {
-        kirim($chat_id, "❌ *CAPTION SALAH!*\nGunakan: `hadiah`, `capit`, `api`, atau `loading`.");
     }
 }
 
-// --- 2. LOGIKA UPDATE TEKS (UPDATE:key:value) ---
-if (strpos($message, "UPDATE:") === 0) {
-    $parts = explode(":", $message);
-    if (count($parts) >= 3) {
-        $key = trim($parts[1]);
-        $val = trim($parts[2]);
-        updateConfig($key, $val);
-        $statusGit = jalankanPush();
-        kirim($chat_id, "✅ *TEKS BERHASIL DIUBAH!*\n`$key` -> *$val*\n\n🚀 *STATUS GITHUB:*\n`$statusGit`");
-    }
+// --- LOGIKA GENERATE KUPON TUNGGAL (/generate) ---
+if (strpos($message, '/generate') === 0 && strpos($message, '/sudogenerate') === false) {
+    $parts = explode(' ', $message);
+    $nominal = $parts[1] ?? "0";
+    
+    $db = json_decode(file_get_contents("kupon.json"), true) ?? [];
+    $kode = "VIPS-" . strtoupper(substr(md5(rand()), 0, 6));
+    
+    $db[] = ["kode" => $kode, "hadiah" => $nominal, "status" => "aktif"];
+    file_put_contents("kupon.json", json_encode($db, JSON_PRETTY_PRINT));
+    shell_exec("sh up.sh");
+
+    kirimPesan($chat_id, "✅ **Kupon Tunggal Dibuat!**\n🎫 Kode: `$kode`\n🎁 Hadiah: `$nominal` (1x pakai)");
 }
 
-// --- 3. MENU UTAMA ---
-if ($message == "/start" || $message == "/settings") {
-    $txt = "🕹 *REMOTE CONTROL DASHBOARD*\n"
-         . "━━━━━━━━━━━━━━━━━━━━\n"
-         . "📸 *GANTI GAMBAR:*\n"
-         . "Kirim foto + caption: `hadiah`, `capit`, `api`, atau `loading`\n\n"
-         . "✍️ *GANTI TEKS:*\n"
-         . "Format: `UPDATE:namaKunci:IsiBaru`\n"
-         . "Contoh: `UPDATE:judulUtama:CAPIT WARKOP69` ";
-    kirim($chat_id, $txt);
+// --- LOGIKA SUDO GENERATE (/sudogenerate) ---
+if ($message == "/sudogenerate") {
+    $db = json_decode(file_get_contents("kupon.json"), true) ?? [];
+    $hadiahAcak = ["1000", "5000", "Zonk", "Jackpot", "10000", "500"];
+    
+    $text = "🎫 **Coupon Ready**\n━━━━━━━━━━━━━━━\n";
+    for ($i = 1; $i <= 30; $i++) {
+        $kode = "REGE-" . strtoupper(substr(md5(rand().$i), 0, 6));
+        $hadiah = $hadiahAcak[array_rand($hadiahAcak)];
+        $db[] = ["kode" => $kode, "hadiah" => $hadiah, "status" => "aktif"];
+        $text .= "{$i}. `{$kode}` ({$hadiah})\n";
+    }
+    
+    file_put_contents("kupon.json", json_encode($db, JSON_PRETTY_PRINT));
+    shell_exec("sh up.sh");
+    kirimPesan($chat_id, $text);
 }
-?>
+
+// --- MENU UTAMA (/start) ---
+if ($message == "/start") {
+    $keyboard = ['inline_keyboard' => [
+        [['text' => '🔄 Ganti Loading', 'callback_data' => 'set_loading']],
+        [['text' => '🏗️ Ganti Capit', 'callback_data' => 'set_capit']],
+        [['text' => '🔥 Ganti Api', 'callback_data' => 'set_api']]
+    ]];
+    kirimPesan($chat_id, "🎮 **Admin Mesin Capit**\nSilakan pilih menu atau gunakan perintah generate.", $keyboard);
+}
